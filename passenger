@@ -2,20 +2,19 @@
 
 # Install
 
-# Copy this script to /etc/munin/plugins/passenger
-# chmod 755 /etc/munin/plugins/passenger
+# 1)
+# wget https://raw.githubusercontent.com/tomlobato/munin-passenger5/master/passenger
+# chmod 755 passenger
+# mv passenger /etc/munin/plugins/passenger
 
-# Then add this to /etc/munin/plugin-conf.d/munin-node
-
+# 2)
+# Add this to /etc/munin/plugin-conf.d/munin-node :
 # [passenger]
 # user root
-# command /root/.rbenv/shims/ruby %c
-# env.passenger_status /root/.rbenv/shims/passenger-status
-# env.passenger_memory_stats /root/.rbenv/shims/passenger-memory-stats
-# env.graph_category Passenger
 # env.PASSENGER_INSTANCE_REGISTRY_DIR /tmp/aptmp
 
-# And /etc/init.d/munin-node restart
+# 3)
+# /etc/init.d/munin-node restart
 
 class SimplePassengerStatus
     def cli argv
