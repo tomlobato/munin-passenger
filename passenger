@@ -82,6 +82,8 @@ CONFIG
 
             puts "#{key}.value #{total/divisor}"
         end
+        
+        exit 0
     end
 end
 
