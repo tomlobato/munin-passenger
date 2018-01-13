@@ -227,10 +227,9 @@ CONFIG
     end
 
     def get_passenger_status
-        if File.exists? CACHE_FILE and
-           (Time.now - File.stat(CACHE_FILE).ctime) < CACHE_EXPIRE and 
-           false
-           MessagePack.unpack File.open(CACHE_FILE, 'rb')
+        if File.exists?(CACHE_FILE) and
+           (Time.now - File.stat(CACHE_FILE).ctime) < CACHE_EXPIRE
+           MessagePack.unpack File.open(CACHE_FILE, 'rb').read
         else
             xml = `passenger-status --show=xml`
             pstatus = Hash.from_xml(xml)['info']
