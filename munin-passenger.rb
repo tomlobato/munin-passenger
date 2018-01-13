@@ -2,7 +2,7 @@
 
 # Install
 
-# wget https://raw.githubusercontent.com/tomlobato/munin-passenger5/master/munin-passenger.rb -O /usr/local/sbin/munin-passenger.rb
+# wget https://raw.githubusercontent.com/tomlobato/munin-passenger/master/munin-passenger.rb -O /usr/local/sbin/munin-passenger.rb
 # chmod 755 /usr/local/sbin/munin-passenger.rb
 # munin-passenger.rb install
 # /etc/init.d/munin-node restart
@@ -18,7 +18,7 @@ class MuninPassenger
 
     GRAPHS = {
         # Global Passenger metrics
-        processes: {
+        global_pool: {
             level: :passenger,
             fields: {
                 max: 'Max pool size',
@@ -27,7 +27,7 @@ class MuninPassenger
             },
         },
         # App metrics
-        top_level_queue: {
+        processes: {
             level: :app,
             fields: {
                 enabled_process_count: 'Enabled process Count',
@@ -293,3 +293,4 @@ env.app_root #{app.app_root}
 end
 
 MuninPassenger.new(ARGV).cli
+
