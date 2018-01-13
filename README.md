@@ -1,21 +1,7 @@
 # Install
-
-1)
 ```
-wget https://raw.githubusercontent.com/tomlobato/munin-passenger5/master/passenger
-chmod 755 passenger
-mv passenger /etc/munin/plugins/passenger
-```
-
-2)
-Add this to /etc/munin/plugin-conf.d/munin-node :
-```
-[passenger]
-user root
-env.PASSENGER_INSTANCE_REGISTRY_DIR /tmp/aptmp
-```
-
-3)
-```
+wget https://raw.githubusercontent.com/tomlobato/munin-passenger5/master/munin-passenger.rb -O /usr/local/sbin/munin-passenger.rb
+chmod 755 /usr/local/sbin/munin-passenger.rb
+munin-passenger.rb install
 /etc/init.d/munin-node restart
 ```
