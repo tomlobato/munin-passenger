@@ -62,6 +62,7 @@ class MuninPassenger
         },
         memory: {
             level: :app_process,
+            factor: 1024,
             fields: {
                 rss: 'Resident Set Size',
                 pss: 'Proportional Set Size',
@@ -113,21 +114,24 @@ CONFIG
         data_global, data_app, data_app_processes = fetch
 
         count = {}
+        
+        factor = GRAPHS[@param.graph][:factor]
+        factor = factor ? factor.to_f : 1
 
         case GRAPHS[@param.graph][:level]
         when :passenger
             fields.each do |field|
-                count[field] = data_global[field].to_i
+                count[field] = data_global[field].to_i * factor
             end
         when :app
             fields.each do |field|
-                count[field] = data_app[field].to_i
+                count[field] = data_app[field].to_i * factor
             end
         when :app_process
             data_app_processes.each do |process|
                 fields.each do |k|
                     count[k] ||= 0
-                    count[k] += process[k].to_i
+                    count[k] += process[k].to_i * factor
                 end
             end
         end
