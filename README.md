@@ -1,3 +1,9 @@
+# Pre-requisites
+```
+gem install activesupport
+gem install msgpack
+```
+
 # Install
 ```
 wget https://raw.githubusercontent.com/tomlobato/munin-passenger/master/munin-passenger.rb -O /usr/local/sbin/munin-passenger.rb
