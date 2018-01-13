@@ -2,7 +2,7 @@
 
 # Install
 
-# wget https://raw.githubusercontent.com/tomlobato/munin-passenger/master/munin-passenger.rb -O /usr/local/sbin/munin-passenger.rb
+# wget https://raw.githubusercontent.com/tomlobato/munin-passenger5/master/munin-passenger.rb -O /usr/local/sbin/munin-passenger.rb
 # chmod 755 /usr/local/sbin/munin-passenger.rb
 # munin-passenger.rb install
 # /etc/init.d/munin-node restart
@@ -270,8 +270,7 @@ CONFIG
 
         # munin_node_conf
 
-        munin_node_conf = "
-[passenger_*]
+        munin_node_conf = "[passenger_*]
 user root
 env.PASSENGER_INSTANCE_REGISTRY_DIR /tmp/aptmp
 "
@@ -282,6 +281,8 @@ env.PASSENGER_INSTANCE_REGISTRY_DIR /tmp/aptmp
 env.app_root #{app.app_root}
 "
         end
+
+        munin_node_conf += "\n"
 
         File.open('/etc/munin/plugin-conf.d/munin-node', 'a').write munin_node_conf
     end
