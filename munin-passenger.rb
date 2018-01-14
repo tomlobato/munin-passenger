@@ -68,6 +68,7 @@ class MuninPassenger
         },
         memory: {
             level: :app_process,
+            factor: 1024,
             vlabel: 'Bytes',
             fields: {
                 rss: 'Resident Set Size',
