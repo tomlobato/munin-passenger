@@ -20,6 +20,7 @@ class MuninPassenger
         # Global Passenger metrics
         global_pool: {
             level: :passenger,
+            vlabel: 'count',
             fields: {
                 max: 'Max pool size',
                 process_count: 'Process Count',
@@ -29,6 +30,7 @@ class MuninPassenger
         # App metrics
         processes: {
             level: :app,
+            vlabel: 'Process count',
             fields: {
                 enabled_process_count: 'Enabled process Count',
                 disabling_process_count: 'Disabling process Count',
@@ -38,31 +40,35 @@ class MuninPassenger
         # App processes metrics: accounted by summing up metrics of all processes of the specific app
         app_queue: {
             level: :app_process,
+            vlabel: 'count',
             fields: {
                 get_wait_list_size: 'App requests queue'
             },
         },
         cpu: {
             level: :app_process,
+            vlabel: '%',
             fields: {
                 cpu: '%CPU'
             }
         },
         sessions: {
             level: :app_process,
+            vlabel: 'Sessions',
             fields: {
                 sessions: 'Sessions'
             }
         },
         processed: {
             level: :app_process,
+            vlabel: 'Processed',
             fields: {
                 processed: 'Processed'
             }
         },
         memory: {
             level: :app_process,
-            factor: 1024,
+            vlabel: 'Bytes',
             fields: {
                 rss: 'Resident Set Size',
                 pss: 'Proportional Set Size',
@@ -93,17 +99,21 @@ class MuninPassenger
 
     private
 
+    def graph
+        GRAPHS[@param.graph]
+    end
+
     def config
         puts <<-CONFIG
 graph_category Passenger
 graph_title #{@param.app_name} #{@param.graph}
-graph_vlabel count
+graph_vlabel #{graph[:vlabel]}
 graph_args --base 1000 -l 0
 graph_info GI
 
 CONFIG
 
-        GRAPHS[@param.graph][:fields].each_pair do |k, v|
+        graph[:fields].each_pair do |k, v|
             puts "#{k}.label #{v}"
         end
 
@@ -115,10 +125,10 @@ CONFIG
 
         count = {}
         
-        factor = GRAPHS[@param.graph][:factor]
+        factor = graph[:factor]
         factor = factor ? factor.to_f : 1
 
-        case GRAPHS[@param.graph][:level]
+        case graph[:level]
         when :passenger
             fields.each do |field|
                 count[field] = data_global[field].to_i * factor
@@ -146,7 +156,7 @@ CONFIG
     # Util
 
     def fields
-        GRAPHS[@param.graph][:fields]
+        graph[:fields]
             .keys
             .map(&:to_s)
     end
@@ -169,9 +179,9 @@ CONFIG
            filename =~ /^passenger_(#{ passenger_keys.join '|' })/
             if $2
                 app_name = $1
-                graph = $2
+                graph_key = $2
             else
-                graph = $1
+                graph_key = $1
             end
             if app_name
                 app_root = ENV['app_root']
@@ -180,7 +190,7 @@ CONFIG
                 end
             end
             OpenStruct.new(
-                graph: graph.to_sym,
+                graph: graph_key.to_sym,
                 app_name: app_name,
                 app_root: app_root
             )
@@ -228,9 +238,9 @@ CONFIG
 
     def get_passenger_status
         if File.exists?(CACHE_FILE) and
-           (Time.now - File.stat(CACHE_FILE).ctime) < CACHE_EXPIRE
-           MessagePack.unpack File.open(CACHE_FILE, 'rb').read
-        else
+            (Time.now - File.stat(CACHE_FILE).ctime) < CACHE_EXPIRE
+            MessagePack.unpack File.open(CACHE_FILE, 'rb').read
+         else
             xml = `passenger-status --show=xml`
             pstatus = Hash.from_xml(xml)['info']
             File.open(CACHE_FILE, 'wb', 0600).write MessagePack.pack(pstatus)
@@ -257,12 +267,12 @@ CONFIG
         # Make Links
 
         links = []
-        GRAPHS.keys.each do |graph|
-            if GRAPHS[graph][:level] == :passenger
-                links << graph
+        GRAPHS.keys.each do |graph_key|
+            if GRAPHS[graph_key][:level] == :passenger
+                links << graph_key
             else
                 apps.each do |app|
-                    links << "#{app.app_name}_#{graph}"
+                    links << "#{app.app_name}_#{graph_key}"
                 end
             end
         end
