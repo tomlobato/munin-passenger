@@ -49,7 +49,7 @@ class MuninPassenger
             level: :app_process,
             vlabel: '%',
             fields: {
-                cpu: '%CPU'
+                cpu: 'CPU'
             }
         },
         sessions: {
